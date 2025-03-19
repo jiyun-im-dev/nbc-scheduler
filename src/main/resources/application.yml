@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: nbc-scheduler
+
+server:
+  port: 8081
