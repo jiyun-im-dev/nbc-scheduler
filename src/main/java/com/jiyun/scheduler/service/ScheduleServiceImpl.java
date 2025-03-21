@@ -8,19 +8,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SchedulerServiceImpl implements SchedulerService {
+public class ScheduleServiceImpl implements ScheduleService {
 
-    @Autowired
     private ScheduleRepository scheduleRepository;
 
+    @Autowired
+    public ScheduleServiceImpl(ScheduleRepository scheduleRepository) {
+        this.scheduleRepository = scheduleRepository;
+    }
+
+    @Override
     public ScheduleResponseDto saveSchedule(ScheduleRequestDto requestDto) {
+        // 요청 DTO의 데이터로 id가 없는 Schedule 객체 생성
         Schedule schedule = Schedule.builder()
                 .title(requestDto.getTitle())
-                .dueDate(requestDto.getDueDate())
+                .date(requestDto.getDate())
                 .content(requestDto.getContent())
                 .username(requestDto.getUsername())
                 .status(requestDto.getStatus())
                 .build();
+
+        // 리포지토리 저장 로직 호출
         return scheduleRepository.saveSchedule(schedule);
     }
 

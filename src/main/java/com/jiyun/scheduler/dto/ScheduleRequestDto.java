@@ -8,9 +8,10 @@ import java.util.Date;
 public class ScheduleRequestDto {
 
     private String title;
-    private Date dueDate;
+    private Date date;
     private String content;
     private String username;
+    private String password;
     private Boolean status;
 
 }
