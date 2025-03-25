@@ -14,7 +14,20 @@ server:
 
 logging:
   level:
+    sql: debug
     org:
       springframework:
         jdbc:
-          core: DEBUG
+          core:
+            JdbcTemplate: DEBUG
+            simple:
+              SimpleJdbcInsert: DEBUG
+              SimpleJdbcCall: DEBUG
+      hibernate:
+        SQL: DEBUG
+        orm:
+          jdbc:
+            bind: trace
+        type:
+          descriptor:
+            sql: TRACE
