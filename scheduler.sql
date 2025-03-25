@@ -22,8 +22,8 @@ CREATE TABLE schedule (
     FOREIGN KEY (username) REFERENCES user(username),
     password VARCHAR(128) COMMENT '비밀번호',
     status BOOLEAN COMMENT '완료 여부',
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성 날짜/시간',
-    updated_at DATETIME ON UPDATE CURRENT_TIMESTAMP COMMENT '수정 날짜/시간'
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성 날짜/시간',
+    updated_at TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정 날짜/시간'
 );
 
 -- 테이블 삭제
