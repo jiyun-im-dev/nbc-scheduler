@@ -11,4 +11,6 @@ public interface ScheduleService {
 
     List<ScheduleResponseDto> findAllSchedulesByCondition(String updatedAt, String username);
 
+    ScheduleResponseDto findScheduleById(Long id);
+
 }

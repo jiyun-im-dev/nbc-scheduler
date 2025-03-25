@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Repository
@@ -63,7 +64,7 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
 
     @Override
     public List<ScheduleResponseDto> findAllSchedules() {
-        return jdbcTemplate.query("SELECT * FROM schedule", scheduleRowMapper());
+        return jdbcTemplate.query("SELECT * FROM schedule", scheduleDtoRowMapper());
     }
 
     @Override
@@ -83,17 +84,42 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
         sql.append(" ORDER BY updated_at DESC");
 
         // SQL 실행
-        return namedParameterJdbcTemplate.query(sql.toString(), paramMap, scheduleRowMapper());
+        return namedParameterJdbcTemplate.query(sql.toString(), paramMap, scheduleDtoRowMapper());
     }
 
     // RowMapper<T>가 함수형 인터페이스이므로 익명 클래스 대신 람다식 사용
-    private RowMapper<ScheduleResponseDto> scheduleRowMapper() {
+    private RowMapper<ScheduleResponseDto> scheduleDtoRowMapper() {
         return (rs, rowNum) -> new ScheduleResponseDto(
                 rs.getLong("id"),
                 rs.getString("title"),
                 rs.getDate("date").toLocalDate(),
                 rs.getString("content"),
                 rs.getString("username"),
+                rs.getBoolean("status"),
+                rs.getTimestamp("created_at"),
+                rs.getTimestamp("updated_at")
+        );
+    }
+
+    @Override
+    public Optional<Schedule> findScheduleById(Long id) {
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("id", id);
+        String sql = "SELECT * FROM schedule WHERE ID = :id";
+
+        List<Schedule> result = namedParameterJdbcTemplate.query(sql, paramMap, scheduleRowMapper());
+
+        return result.stream().findAny();
+    }
+
+    private RowMapper<Schedule> scheduleRowMapper() {
+        return (rs, rowNum) -> new Schedule(
+                rs.getLong("id"),
+                rs.getString("title"),
+                rs.getDate("date").toLocalDate(),
+                rs.getString("content"),
+                rs.getString("username"),
+                rs.getString("password"),
                 rs.getBoolean("status"),
                 rs.getTimestamp("created_at"),
                 rs.getTimestamp("updated_at")

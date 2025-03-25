@@ -28,19 +28,18 @@ public class ScheduleController {
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 
-//    @GetMapping
-//    public ResponseEntity<ScheduleResponseDto> findScheduleById(@PathVariable Long id) {
-//        // TODO: DB에서 아이디로 스케줄을 찾아서 Schedule 객체를 생성
-//
-//        return new ResponseEntity<>(new ScheduleResponseDto(schedule), HttpStatus.OK);
-//    }
-
     @GetMapping
     public List<ScheduleResponseDto> findAllSchedulesByCondition(
             // 쿼리 스트링으로 조건을 받음
             @RequestParam(required = false) String updatedAt,
             @RequestParam(required = false) String username) {
         return scheduleService.findAllSchedulesByCondition(updatedAt, username);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ScheduleResponseDto> findScheduleById(@PathVariable Long id) {
+        ScheduleResponseDto responseDto = scheduleService.findScheduleById(id);
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
 //    @PutMapping("/{id}")

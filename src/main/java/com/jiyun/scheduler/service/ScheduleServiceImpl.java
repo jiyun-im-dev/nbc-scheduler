@@ -1,6 +1,5 @@
 package com.jiyun.scheduler.service;
 
-import ch.qos.logback.classic.Logger;
 import com.jiyun.scheduler.dto.ScheduleRequestDto;
 import com.jiyun.scheduler.dto.ScheduleResponseDto;
 import com.jiyun.scheduler.entity.Schedule;
@@ -12,6 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class ScheduleServiceImpl implements ScheduleService {
@@ -52,6 +52,18 @@ public class ScheduleServiceImpl implements ScheduleService {
         }
 
         return scheduleRepository.findAllSchedulesByCondition(updatedAtDateTime, username);
+    }
+
+    @Override
+    public ScheduleResponseDto findScheduleById(Long id) {
+        try {
+            Schedule schedule = scheduleRepository.findScheduleById(id)
+                    .orElseThrow(() -> new NoSuchElementException("스케줄이 존재하지 않습니다."));
+            return new ScheduleResponseDto(schedule);
+        } catch (NoSuchElementException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
     }
 
 }
