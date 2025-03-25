@@ -7,7 +7,6 @@ import lombok.Getter;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.util.Date;
 
 @Getter
 @AllArgsConstructor
