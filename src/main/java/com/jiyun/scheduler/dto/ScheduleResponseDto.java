@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -14,11 +16,12 @@ public class ScheduleResponseDto {
 
     private Long id;
     private String title;
-    private Date date;
+    private LocalDate date;
     private String content;
     private String username;
-    private String password;
     private Boolean status;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
 
     public ScheduleResponseDto(Schedule schedule) {
         this.id = schedule.getId();
@@ -27,6 +30,8 @@ public class ScheduleResponseDto {
         this.content = schedule.getContent();
         this.username = schedule.getUsername();
         this.status = schedule.getStatus();
+        this.createdAt = schedule.getCreatedAt();
+        this.updatedAt = schedule.getUpdatedAt();
     }
 
 }

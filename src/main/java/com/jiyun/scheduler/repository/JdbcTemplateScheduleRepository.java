@@ -3,12 +3,16 @@ package com.jiyun.scheduler.repository;
 import com.jiyun.scheduler.dto.ScheduleResponseDto;
 import com.jiyun.scheduler.entity.Schedule;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
-import javax.sql.DataSource;
+import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -16,9 +20,12 @@ import java.util.Map;
 public class JdbcTemplateScheduleRepository implements ScheduleRepository {
 
     private final JdbcTemplate jdbcTemplate;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    public JdbcTemplateScheduleRepository(DataSource dataSource) {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
+    @Autowired
+    public JdbcTemplateScheduleRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
     }
 
     @Override
@@ -48,9 +55,49 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
                 .date(schedule.getDate())
                 .content(schedule.getContent())
                 .username(schedule.getUsername())
-                .password(schedule.getPassword())
                 .status(schedule.getStatus())
+                .createdAt(schedule.getCreatedAt())
+                .updatedAt(schedule.getUpdatedAt())
                 .build();
+    }
+
+    @Override
+    public List<ScheduleResponseDto> findAllSchedules() {
+        return jdbcTemplate.query("SELECT * FROM schedule", scheduleRowMapper());
+    }
+
+    @Override
+    public List<ScheduleResponseDto> findAllSchedulesByCondition(LocalDateTime updatedAt, String username) {
+        StringBuilder sql = new StringBuilder("SELECT * FROM schedule WHERE 1 = 1");
+
+        // 동적 조건 추가
+        Map<String, Object> paramMap = new HashMap<>();
+        if (updatedAt != null) {
+            sql.append(" AND updated_at BETWEEN :updatedAt AND NOW()");
+            paramMap.put("updatedAt", updatedAt);
+        }
+        if (username != null && !username.isEmpty()) {
+            sql.append(" AND username = :username");
+            paramMap.put("username", username);
+        }
+        sql.append(" ORDER BY updated_at DESC");
+
+        // SQL 실행
+        return namedParameterJdbcTemplate.query(sql.toString(), paramMap, scheduleRowMapper());
+    }
+
+    // RowMapper<T>가 함수형 인터페이스이므로 익명 클래스 대신 람다식 사용
+    private RowMapper<ScheduleResponseDto> scheduleRowMapper() {
+        return (rs, rowNum) -> new ScheduleResponseDto(
+                rs.getLong("id"),
+                rs.getString("title"),
+                rs.getDate("date").toLocalDate(),
+                rs.getString("content"),
+                rs.getString("username"),
+                rs.getBoolean("status"),
+                rs.getTimestamp("created_at"),
+                rs.getTimestamp("updated_at")
+        );
     }
 
 }
