@@ -71,15 +71,18 @@ public class ScheduleServiceImpl implements ScheduleService {
     public ScheduleResponseDto updateSchedule(Long id, String password, ScheduleUpdateDto updateDto) {
         Schedule schedule = scheduleRepository.findScheduleById(id)
                 .orElseThrow(() -> new NoSuchElementException("스케줄이 존재하지 않습니다."));
-        if (schedule.getPassword().equals(password)) {
-            int rowsAffected = scheduleRepository.updateSchedule(id, updateDto);
-            if (rowsAffected == 0) {
-                throw new NoSuchElementException("스케줄이 존재하지 않습니다.");
-            }
-            return new ScheduleResponseDto(schedule);
-        } else {
+
+        // 비밀번호가 일치하지 않는 경우
+        if (!schedule.getPassword().equals(password)) {
             throw new InvalidPasswordException("비밀번호가 일치하지 않습니다.");
         }
+
+        // 스케줄 수정 실행
+        int rowsAffected = scheduleRepository.updateSchedule(id, updateDto);
+        if (rowsAffected == 0) {
+            throw new NoSuchElementException("스케줄이 존재하지 않습니다.");
+        }
+        return new ScheduleResponseDto(schedule);
     }
 
 }
