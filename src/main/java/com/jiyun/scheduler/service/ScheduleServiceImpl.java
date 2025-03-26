@@ -4,7 +4,9 @@ import com.jiyun.scheduler.dto.ScheduleCreateDto;
 import com.jiyun.scheduler.dto.ScheduleResponseDto;
 import com.jiyun.scheduler.dto.ScheduleUpdateDto;
 import com.jiyun.scheduler.entity.Schedule;
+import com.jiyun.scheduler.exception.InvalidPasswordException;
 import com.jiyun.scheduler.repository.ScheduleRepository;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -66,12 +68,18 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public ScheduleResponseDto updateSchedule(Long id, ScheduleUpdateDto updateDto) {
-        int rowsAffected = scheduleRepository.updateSchedule(id, updateDto);
-        if (rowsAffected == 0) {
-            throw new NoSuchElementException("스케줄이 존재하지 않습니다.");
+    public ScheduleResponseDto updateSchedule(Long id, String password, ScheduleUpdateDto updateDto) {
+        Schedule schedule = scheduleRepository.findScheduleById(id)
+                .orElseThrow(() -> new NoSuchElementException("스케줄이 존재하지 않습니다."));
+        if (schedule.getPassword().equals(password)) {
+            int rowsAffected = scheduleRepository.updateSchedule(id, updateDto);
+            if (rowsAffected == 0) {
+                throw new NoSuchElementException("스케줄이 존재하지 않습니다.");
+            }
+            return new ScheduleResponseDto(schedule);
+        } else {
+            throw new InvalidPasswordException("비밀번호가 일치하지 않습니다.");
         }
-        return new ScheduleResponseDto(scheduleRepository.findScheduleById(id).get());
     }
 
 }
