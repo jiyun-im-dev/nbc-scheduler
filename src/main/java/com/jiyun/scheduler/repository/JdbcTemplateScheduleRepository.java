@@ -1,6 +1,7 @@
 package com.jiyun.scheduler.repository;
 
 import com.jiyun.scheduler.dto.ScheduleResponseDto;
+import com.jiyun.scheduler.dto.ScheduleUpdateDto;
 import com.jiyun.scheduler.entity.Schedule;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +12,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Repository
@@ -49,7 +47,7 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
         // Primary Key (id 컬럼)
         Number key = jdbcInsert.executeAndReturnKey(parameters);
 
-        // 빌더 패턴을 이용해 DTO를 리턴
+        // 빌더 패턴을 이용해 DTO 를 리턴
         return ScheduleResponseDto.builder()
                 .id(key.longValue())
                 .title(schedule.getTitle())
@@ -124,6 +122,22 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
                 rs.getTimestamp("created_at"),
                 rs.getTimestamp("updated_at")
         );
+    }
+
+    @Override
+    public int updateSchedule(Long id, ScheduleUpdateDto updateDto) {
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("id", id);
+        paramMap.put("title", updateDto.getTitle());
+        paramMap.put("date", updateDto.getDate());
+        paramMap.put("content", updateDto.getContent());
+        paramMap.put("status", updateDto.getStatus());
+        String sql = "UPDATE schedule " +
+                "SET title = :title, date = :date, content = :content, status = :status " +
+                "WHERE ID = :id";
+
+        int rowsAffected = namedParameterJdbcTemplate.update(sql, paramMap);
+        return rowsAffected;
     }
 
 }

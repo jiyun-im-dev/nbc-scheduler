@@ -1,7 +1,8 @@
 package com.jiyun.scheduler.service;
 
-import com.jiyun.scheduler.dto.ScheduleRequestDto;
+import com.jiyun.scheduler.dto.ScheduleCreateDto;
 import com.jiyun.scheduler.dto.ScheduleResponseDto;
+import com.jiyun.scheduler.dto.ScheduleUpdateDto;
 import com.jiyun.scheduler.entity.Schedule;
 import com.jiyun.scheduler.repository.ScheduleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 public class ScheduleServiceImpl implements ScheduleService {
@@ -24,7 +26,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public ScheduleResponseDto saveSchedule(ScheduleRequestDto requestDto) {
+    public ScheduleResponseDto saveSchedule(ScheduleCreateDto requestDto) {
         // 요청 DTO의 데이터로 id가 없는 Schedule 객체 생성
         Schedule schedule = Schedule.builder()
                 .title(requestDto.getTitle())
@@ -45,10 +47,8 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         // 파라미터로 들어온 String(updatedAt)을 LocalDateTime 으로 변환
         if (updatedAt != null) {
-            System.out.println("updatedAt 파라미터 입력됨: " + updatedAt);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             updatedAtDateTime = LocalDate.parse(updatedAt, formatter).atStartOfDay();
-            System.out.println("updatedAtDateTime = " + updatedAtDateTime);
         }
 
         return scheduleRepository.findAllSchedulesByCondition(updatedAtDateTime, username);
@@ -64,6 +64,15 @@ public class ScheduleServiceImpl implements ScheduleService {
             System.out.println(e.getMessage());
             return null;
         }
+    }
+
+    @Override
+    public ScheduleResponseDto updateSchedule(Long id, ScheduleUpdateDto updateDto) {
+        int rowsAffected = scheduleRepository.updateSchedule(id, updateDto);
+        if (rowsAffected == 0) {
+            throw new NoSuchElementException("스케줄이 존재하지 않습니다.");
+        }
+        return new ScheduleResponseDto(scheduleRepository.findScheduleById(id).get());
     }
 
 }

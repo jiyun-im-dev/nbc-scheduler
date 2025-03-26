@@ -1,6 +1,6 @@
 package com.jiyun.scheduler.entity;
 
-import com.jiyun.scheduler.dto.ScheduleRequestDto;
+import com.jiyun.scheduler.dto.ScheduleCreateDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,7 +23,7 @@ public class Schedule {
     private Timestamp createdAt; // Both date and time
     private Timestamp updatedAt; // Both date and time
 
-    public void update(ScheduleRequestDto requestDto) {
+    public void update(ScheduleCreateDto requestDto) {
         this.title = requestDto.getTitle();
         this.date = requestDto.getDate();
         this.content = requestDto.getContent();

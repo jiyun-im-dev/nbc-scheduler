@@ -1,7 +1,8 @@
 package com.jiyun.scheduler.controller;
 
-import com.jiyun.scheduler.dto.ScheduleRequestDto;
+import com.jiyun.scheduler.dto.ScheduleCreateDto;
 import com.jiyun.scheduler.dto.ScheduleResponseDto;
+import com.jiyun.scheduler.dto.ScheduleUpdateDto;
 import com.jiyun.scheduler.service.ScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,7 +23,7 @@ public class ScheduleController {
     }
 
     @PostMapping
-    public ResponseEntity<ScheduleResponseDto> createSchedule(@RequestBody ScheduleRequestDto requestDto) {
+    public ResponseEntity<ScheduleResponseDto> createSchedule(@RequestBody ScheduleCreateDto requestDto) {
         ScheduleResponseDto responseDto = scheduleService.saveSchedule(requestDto);
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
@@ -41,17 +42,13 @@ public class ScheduleController {
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
-//    @PutMapping("/{id}")
-//    public ResponseEntity<ScheduleResponseDto> updateSchedule(
-//            @PathVariable Long id,
-//            @RequestBody ScheduleRequestDto requestDto) {
-//        // TODO: DB 에서 id로 스케줄을 찾아옴, Validation 필요
-//        // Schedule schedule = DB에서 찾아온 데이터
-//
-//        schedule.update(requestDto);
-//
-//        return new ScheduleResponseDto(schedule);
-//    }
+    @PatchMapping("/{id}")
+    public ResponseEntity<ScheduleResponseDto> updateSchedule(
+            @PathVariable Long id,
+            @RequestBody ScheduleUpdateDto updateDto) {
+        ScheduleResponseDto responseDto = scheduleService.updateSchedule(id, updateDto);
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+    }
 //
 //    @DeleteMapping("/{id}")
 //    public ResponseEntity<Void> deleteSchedule(@PathVariable Long id) {
