@@ -32,7 +32,8 @@ public class ScheduleController {
     public List<ScheduleResponseDto> findAllSchedulesByCondition(
             // 쿼리 스트링으로 조건을 받음
             @RequestParam(required = false) String updatedAt,
-            @RequestParam(required = false) String username) {
+            @RequestParam(required = false) String username
+    ) {
         return scheduleService.findAllSchedulesByCondition(updatedAt, username);
     }
 
@@ -46,18 +47,18 @@ public class ScheduleController {
     public ResponseEntity<ScheduleResponseDto> updateSchedule(
             @PathVariable Long id,
             @RequestParam String password,
-            @RequestBody ScheduleUpdateDto updateDto) {
+            @RequestBody ScheduleUpdateDto updateDto
+    ) {
         ScheduleResponseDto responseDto = scheduleService.updateSchedule(id, password, updateDto);
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
-//
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<Void> deleteSchedule(@PathVariable Long id) {
-//        // TODO: DB 에서 ID에 해당하는 스케줄 삭제
-//
-//        return new ResponseEntity<>(HttpStatus.SEE_OTHER); // 삭제 성공
-//
-//        // TODO: 해당하는 스케줄이 없으면 NOT_FOUND 를 반환
-//    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteSchedule(
+            @PathVariable Long id,
+            @RequestParam String password
+    ) {
+        return new ResponseEntity<>(HttpStatus.SEE_OTHER); // 삭제 성공
+    }
 
 }
