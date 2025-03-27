@@ -144,7 +144,7 @@
   ```
 - Response Code: `200 OK`, `400 Bad Request`
 
-### 4.4. 일정 삭제
+### 4.5. 일정 삭제
 
 - 설명
   - `Path Variable`로 전달된 `ID`에 해당하는 일정을 삭제합니다.
