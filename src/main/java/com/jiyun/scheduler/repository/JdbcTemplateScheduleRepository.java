@@ -132,12 +132,22 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
         paramMap.put("date", updateDto.getDate());
         paramMap.put("content", updateDto.getContent());
         paramMap.put("status", updateDto.getStatus());
-        String sql = "UPDATE schedule " +
-                "SET title = :title, date = :date, content = :content, status = :status " +
-                "WHERE ID = :id";
 
-        int rowsAffected = namedParameterJdbcTemplate.update(sql, paramMap);
-        return rowsAffected;
+        StringBuilder sql = new StringBuilder("UPDATE schedule ");
+        sql.append("SET title = :title, date = :date, content = :content, status = :status ");
+        sql.append("WHERE ID = :id");
+
+        // 쿼리의 영향을 받은 행 수를 반환
+        return namedParameterJdbcTemplate.update(sql.toString(), paramMap);
+    }
+
+    @Override
+    public int deleteSchedule(Long id) {
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("id", id);
+
+        // 쿼리의 영향을 받은 행 수를 반환
+        return namedParameterJdbcTemplate.update("DELETE FROM schedule WHERE id = :id", paramMap);
     }
 
 }

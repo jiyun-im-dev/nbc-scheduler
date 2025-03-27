@@ -58,6 +58,7 @@ public class ScheduleController {
             @PathVariable Long id,
             @RequestParam String password
     ) {
+        scheduleService.deleteSchedule(id, password);
         return new ResponseEntity<>(HttpStatus.SEE_OTHER); // 삭제 성공
     }
 

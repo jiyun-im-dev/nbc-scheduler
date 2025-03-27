@@ -20,4 +20,6 @@ public interface ScheduleRepository {
 
     int updateSchedule(Long id, ScheduleUpdateDto updateDto);
 
+    int deleteSchedule(Long id);
+
 }
