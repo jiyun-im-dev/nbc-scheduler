@@ -1,11 +1,9 @@
 # 일정 관리 앱
-<hr>
 
 ## 1. 프로젝트 개요
 일정 및 유저 관련 CRUD를 실행하는 백엔드 API입니다.
 
 (유저 관련 CRUD는 미구현 상태입니다.)
-<hr>
 
 ## 2. 기술 스택
 - Java 17
@@ -14,11 +12,9 @@
 - Lombok
 - JdbcTemplate
 - Gradle
-<hr>
 
 ## 3. ERD
 ![README_erd.png](README_erd.png)
-<hr>
 
 ## 4. API 명세서
 
